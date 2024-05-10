@@ -28,7 +28,7 @@ $('#form').on('submit', (e) => {
     });
 })
 
-const gethistory = () => {
+function getHistory() {
     $.ajax({
         type: "GET",
         url: `http://localhost:3001/getHistory/${token}`,
