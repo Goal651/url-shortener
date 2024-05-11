@@ -49,17 +49,16 @@
 </head>
 
 <body>
-    <h1>Url Shortener</h1>
-
-    <div id="result"></div>
-    <button onclick="getHistory()">Get history</button>
-    <form id="form">
-        <label for="shortUrl">Enter long url:</label>
-        <input type="text" id="shortUrl">
-        <label for="username">Enter username</label>
-        <input type="text" id="userName">
-        <button type="submit">Shorten</button>
+    <h2>Login</h2>
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Login</button>
     </form>
+
+    
 
 
     <script src="/jquery-3.7.1.min.js"></script>

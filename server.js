@@ -54,7 +54,7 @@ app.post('/shortenUrl', (req, res) => {
     const shortUrl = generateShortUrl(longUrl);
     const data = [longUrl, shortUrl, username];
 
-    const query = `INSERT INTO urls (longUrl, shortUrl,username) VALUES (? , ?, ?)`;
+    const query = `INSERT INTO urls (longUrl, shortUrl,email) VALUES (? , ?, ?)`;
     connection.query(query, data, (err, rows) => {
         if (err) {
             console.error('error connecting: ' + err.stack);

@@ -1,6 +1,16 @@
 
 
-const token = localStorage.getItem('jwt');
+// Function to get cookie value
+const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+};
+
+// Example of accessing access token
+const token = getCookie('accessToken');
+console.log(token);
+
 
 
 $('#form').on('submit', (e) => {

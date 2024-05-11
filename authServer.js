@@ -1,27 +1,21 @@
 require('dotenv').config();
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const { LocalStorage } = require('node-localstorage');
+const localStorage = new LocalStorage('./scratch');
+
 
 
 const app = express();
+
 
 //middlewares
 app.use(cors());
 app.use(express.json());
 
-const verifyToken = (token) => {
-    if (token == null) return res.sendStatus(401);
-    jwt.verify(token, accessTokenSecret, (err, user) => {
-        if (err) { return res.sendStatus(403); }
-        req.user = user;
-        let username = req.user.username;
-        return username;
-    })
-
-}
 
 
 
@@ -31,8 +25,6 @@ let connection = mysql.createConnection({
     password: '',
     database: 'test'
 });
-
-
 connection.connect((err) => {
     if (err) {
         console.error('error connecting: ' + err.stack);
@@ -40,20 +32,6 @@ connection.connect((err) => {
     }
     console.log('connected to database as id ' + connection.threadId);
 });
-
-
-const users = [
-    {
-        email: 'bugiriwilson@gmail.com'
-    },
-    {
-        email: 'bugiriwilson651@gmail.com'
-    },
-    {
-        email: 'goal@gmail.com'
-    }
-]
-
 
 
 
@@ -66,8 +44,6 @@ app.post('/login', (req, res) => {
     const { email } = req.body;
 
 
-    //Db thing
-
     let query = 'SELECT * FROM users WHERE email = ?';
     connection.query(query, [email], (err, result) => {
         if (err) {
@@ -75,21 +51,21 @@ app.post('/login', (req, res) => {
             return res.sendStatus(500);
         }
         if (result.length > 0) {
-            const user = result[0].username;
-            const email = result[0].email
-            const accessToken = generateAccessToken({ email: email });
-            const refreshToken = jwt.sign({ email: email }, process.env.REFRESH_TOKEN_SECRET);
+            const { email } = result[0];
 
+            const accessToken = generateAccessToken(email);
 
             //
-            let query1 = 'INSERT INTO tokens (email, token) VALUES (?, ?)';
+            let query1 = 'INSERT INTO token (email, token) VALUES (?, ?)';
             connection.query(query1, [email, accessToken], (err, result) => {
                 if (err) {
                     console.log(err);
                     return res.sendStatus(500);
                 }
+                res.sendStatus(200);
+
                 //Store the access token on website to be accessed by frontend
-                localStorage.setItem('jwt', accessToken);
+                res.cookie('accessToken', accessToken, { httpOnly: true });
             })
         } else {
             res.status(401).send('Invalid credentials');
@@ -98,25 +74,36 @@ app.post('/login', (req, res) => {
 
 })
 
+const verifyToken = (token, callback) => {
+    if (token == null) return callback(new Error('Token is null'), null);
+    jwt.verify(token, accessTokenSecret, (err, user) => {
+        if (err) return callback(err, null);
+        let username = user.username;
+        callback(null, username);
+    });
+};
+
 app.get('/:token', (req, res) => {
-
     const token = req.params.token;
-    if (token == null) return res.sendStatus(401);
-    let username = verifyToken(token)
 
-    let query = 'SELECT * FROM tokens WHERE token = ?';
-    connection.query(query, [token], (err, result) => {
-        if (err) {
-            console.log(err);
-            return res.sendStatus(500);
-        }
-        if (result.length > 0) {
-            res.redirect(`http://localhost:3000/history/${username}`);
-        } else {
-            res.status(401).send('Invalid credentials');
-        }
-    })
-})
+    verifyToken(token, (err, username) => {
+        if (err) return res.sendStatus(403);
+
+        let query = 'SELECT * FROM tokens WHERE token = ?';
+        connection.query(query, [token], (err, result) => {
+            if (err) {
+                console.log(err);
+                return res.sendStatus(500);
+            }
+            if (result.length > 0) {
+                res.redirect(`http://localhost:3000/history/${username}`);
+            } else {
+                res.status(401).send('Invalid credentials');
+            }
+        });
+    });
+});
+
 
 
 
