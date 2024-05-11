@@ -10,12 +10,10 @@ const getCookie = (name) => {
     if (parts.length === 2) return parts.pop().split(';').shift();
 };
 
-
+const token = getCookie('accessToken');
 
 
 function urlShortener() {
-
-
     $('#form').on('submit', (e) => {
         e.preventDefault();
 
@@ -23,16 +21,40 @@ function urlShortener() {
             type: "POST",
             url: "http://localhost:3000/shortenUrl/",
             data: JSON.stringify({
-                longUrl: $('#username').val(),
-                username: $('#userName').val()
+                longUrl: $('#longurl').val(),
             }),
             contentType: "application/json",
             dataType: "json",
             success: function (result) {
 
-                let container = $('#result');
+                let container = $('#longUrl');
                 container.append(result.message)
 
+            },
+            error: function (error) {
+                let container = $('#result');
+                container.append('Failed to shorten');
+            }
+        });
+    })
+}
+
+function secureUrlShortener() {
+    $('#form').on('submit', (e) => {
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:3000/secure/shortenUrl/",
+            data: JSON.stringify({
+                longUrl: $('#longurl').val(),
+                email: token
+            }),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (result) {
+                let container = $('#longUrl');
+                container.append(result.message);
             },
             error: function (error) {
                 let container = $('#result');
@@ -45,7 +67,6 @@ function urlShortener() {
 function login() {
     $('#loginForm').on('submit', (e) => {
         e.preventDefault();
-
         $.ajax({
             type: "POST",
             url: "http://localhost:3001/login",
@@ -66,14 +87,8 @@ function login() {
     })
 }
 
-
-
-
 function getHistory() {
-
-    const token = getCookie('accessToken');
     console.log(token);
-
     $.ajax({
         type: "GET",
         url: `http://localhost:3001/getHistory/${token}`,
@@ -84,6 +99,4 @@ function getHistory() {
             console.log(error);
         }
     })
-
-
 }

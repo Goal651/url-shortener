@@ -5,18 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Url Shortener</h1>
-    <div id="lngUrl"></div>
-    <form id="form">
-        <label for="shortUrl">Enter long url:</label>
-        <input type="text" id="shortUrl">
-        <label for="username">Enter username</label>
-        <input type="text" id="userName">
-        <button type="submit">Shorten</button>
-    </form>
+
+    <h1 class="header">Url Shortener</h1>
+    <div class="home-page">
+        <div id="longUrl"></div>
+        <form id="form">
+            <label for="longurl">Enter long url:</label>
+            <input type="text" id="longurl">
+            <button type="submit">Shorten</button>
+        </form>
+    </div>
     <script src="/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="/index.js"></script>
 </body>

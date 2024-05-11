@@ -50,8 +50,9 @@ app.get('/', (req, res) => {
 })
 
 app.post('/shortenUrl', (req, res) => {
-    const { longUrl, username } = req.body;
+    const { longUrl} = req.body;
     const shortUrl = generateShortUrl(longUrl);
+    const username="guest";
     const data = [longUrl, shortUrl, username];
 
     const query = `INSERT INTO urls (longUrl, shortUrl,email) VALUES (? , ?, ?)`;
@@ -59,11 +60,12 @@ app.post('/shortenUrl', (req, res) => {
         if (err) {
             console.error('error connecting: ' + err.stack);
             return res.status(500).json({ error: 'Internal server error' });
-
         }
         res.status(200).json({ message: `Your short url is http://localhost:3000/${shortUrl}` });
     });
 });
+
+
 
 app.get('/:shortUrl', async (req, res) => {
     const { shortUrl } = req.params;
