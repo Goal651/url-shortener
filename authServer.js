@@ -3,10 +3,8 @@ const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser')
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
-const { LocalStorage } = require('node-localstorage');
-const localStorage = new LocalStorage('./scratch');
-
 
 
 const app = express();
@@ -14,7 +12,9 @@ const app = express();
 
 //middlewares
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 
 
@@ -51,22 +51,18 @@ app.post('/login', (req, res) => {
             return res.sendStatus(500);
         }
         if (result.length > 0) {
+
             const { email } = result[0];
-
             const accessToken = generateAccessToken(email);
-
-            //
             let query1 = 'INSERT INTO token (email, token) VALUES (?, ?)';
             connection.query(query1, [email, accessToken], (err, result) => {
                 if (err) {
                     console.log(err);
                     return res.sendStatus(500);
                 }
-                res.sendStatus(200);
+                res.status(200).cookie('accessToken', accessToken, { httpOnly: true }).send({ message:email});
+            });
 
-                //Store the access token on website to be accessed by frontend
-                res.cookie('accessToken', accessToken, { httpOnly: true });
-            })
         } else {
             res.status(401).send('Invalid credentials');
         }
@@ -83,7 +79,7 @@ const verifyToken = (token, callback) => {
     });
 };
 
-app.get('/:token', (req, res) => {
+app.get('/getHistory/:token', (req, res) => {
     const token = req.params.token;
 
     verifyToken(token, (err, username) => {
