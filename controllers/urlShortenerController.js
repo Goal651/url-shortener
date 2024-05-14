@@ -44,7 +44,7 @@ const urlShortener = (req, res) => {
             console.error('error connecting: ' + err.stack);
             return res.status(500).json({ error: 'Internal server error' });
         }
-        res.status(200).json({ message: `Your short url is http://localhost:3000/${shortUrl}` });
+        res.redirect('/home', { longurl: shortUrl });
     });
 }
 
