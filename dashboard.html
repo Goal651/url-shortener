@@ -10,11 +10,11 @@
 
 <body>
     <h1 class="header">Url Shortener</h1>
-    <div id="longUrl"></div>
+    <div id="securelongUrl"></div>
     <div class="home-page">
 
-    <form id="form">
-        <label for="shortUrl">Enter long url:</label>
+    <form onsubmit="secureUrlShortener()" id="form">
+        <label for="longurl">Enter long url:</label>
         <input type="text" id="shortUrl">
         <button type="submit">Shorten</button>
     </form>

@@ -53,7 +53,7 @@ function secureUrlShortener() {
             contentType: "application/json",
             dataType: "json",
             success: function (result) {
-                let container = $('#longUrl');
+                let container = $('#securelongUrl');
                 container.append(result.message);
             },
             error: function (error) {
