@@ -12,10 +12,10 @@
 
     <h1 class="header">Url Shortener</h1>
     <div class="home-page">
-        <div id="longUrl">  <%= longUrl %></div>
-        <form action="/url-shortener" method="post">
+        <div id="longUrl"> <%= ShortenUrl ? ShortenUrl : "No URL available" %></div>
+        <form action="/shorten-url" method="post">
             <label for="longurl">Enter long url:</label>
-            <input type="text" id="longurl">
+            <input type="text" name="longUrl" id="longurl">
             <button type="submit">Shorten</button>
         </form>
     </div>

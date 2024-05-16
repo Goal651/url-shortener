@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const routes = require('./routes/routes');
+const cookieParser = require('cookie-parser');
 const pageRoutes = require('./routes/pages');
 const cors = require('cors');
 const mysql = require('mysql');
@@ -16,6 +17,7 @@ const app = express();
 //Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
